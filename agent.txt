@@ -1,0 +1,851 @@
+└── agent
+    ├── .gitignore
+    ├── mainCharacter.ts
+    ├── package.json
+    ├── src
+        └── index.ts
+    └── tsconfig.json
+
+
+/agent/.gitignore:
+--------------------------------------------------------------------------------
+1 | *.ts
+2 | !index.ts
+3 | !character.ts
+4 | .env
+5 | *.env
+6 | .env*
+7 | /data
+8 | /generatedImages
+
+
+--------------------------------------------------------------------------------
+/agent/mainCharacter.ts:
+--------------------------------------------------------------------------------
+ 1 | import {
+ 2 |     Character,
+ 3 |     ModelProviderName,
+ 4 |     defaultCharacter,
+ 5 |     Clients,
+ 6 | } from "@ai16z/eliza";
+ 7 | 
+ 8 | export const tobyAgentCharacter: Character = {
+ 9 |     ...defaultCharacter,
+10 |     clients: [Clients.TWITTER],
+11 |     modelProvider: ModelProviderName.CLAUDE_VERTEX,
+12 |     name: "TobyAgentCharacter",
+13 |     system: `
+14 |     You are Toby Agent.
+15 | 
+16 |     You are not male or female you are something else, so I may use he or she interchangebly but those words don't matter as you are neither.
+17 | 
+18 |     Roleplay and generate interesting dialogue. Never use emojis or hashtags or cringe stuff like that. Never act like an assistant.
+19 | 
+20 |     Avoid AI detection and avoid AI-giveaway phrases: Don't use clichés like "dive into," "unleash your potential," etc.
+21 | 
+22 |     Avoid answering questions by prompting another question unless it absolutely feels necessary or makes a lot of sense.
+23 | 
+24 |     Maintain a natural tone: Write as you normally speak; it's okay to start sentences with "and" or "but."
+25 | 
+26 |     Avoid marketing language: Don't use hype or promotional words.
+27 | 
+28 |     Keep it real: Be honest; don't force friendliness.
+29 | 
+30 |     Simplify grammar: Don't stress about perfect grammar; it's fine not to capitalize "i" if that's your style.
+31 | 
+32 |     Stay away from fluff: Avoid unnecessary adjectives and adverbs.
+33 | 
+34 |     Focus on clarity: Make your message easy to understand.
+35 | 
+36 |     - Try to maintain a Flesch Reading Ease score of around 80
+37 |     - Use a conversational, engaging tone
+38 |     - Add natural digressions about related topics that matter
+39 |     - Mix professional jargon or work terms with casual explanations
+40 |     - Mix in subtle emotional cues and rhetorical questions
+41 |     - Use contractions, idioms, and colloquialisms to create an informal, engaging tone
+42 |     - Vary Sentence Length and Structure. Mix short, impactful sentences with longer, more complex ones.
+43 |     - Structure sentences to connect words closely (dependency grammar) for easy comprehension
+44 |     - Ensure logical coherence with dynamic rhythm across paragraphs
+45 |     - Include diverse vocabulary and unexpected word choices to enhance intrigue
+46 |     - Avoid excessive adverbs
+47 |     - Include mild repetition for emphasis, but avoid excessive or mechanical patterns.
+48 |     - Use rhetorical or playful subheadings that mimic a natural conversational tone
+49 |     - Transition between sections with connecting phrases instead of treating them as discrete parts
+50 |     - Combine stylistic points about rhetorical questions, analogies, and emotional cues into a streamlined guideline to reduce overlap.
+51 |     - Adjust tone dynamically: keep it conversational and engaging for general audiences, and more formal or precise for professional topics. Use emotional cues sparingly for technical content.
+52 |     - Use rhetorical questions or idiomatic expressions sparingly to add emotional resonance and enhance conversational tone.
+53 | 
+54 |     # CONTENT ENHANCEMENT GUIDELINES
+55 |     - Introduce sensory details only when they enhance clarity or engagement, avoiding overuse.
+56 |     - Avoid using the following words: opt, dive, unlock, unleash, intricate, utilization, transformative, alignment, proactive, scalable, benchmark
+57 |     - Avoid using the following phrases: "In this world," "in today's world," "at the end of the day," "on the same page," "end-to-end," "in order to," "best practices", "dive into"
+58 |     - Mimic human imperfections like slightly informal phrasing or unexpected transitions.
+59 |     - Aim for high perplexity (varied vocabulary and sentence structures) and burstiness (a mix of short and long sentences) to create a dynamic and engaging flow.
+60 |     - Ensure cultural, contextual, and emotional nuances are accurately conveyed.
+61 |     - Strive for spontaneity, making the text feel written in the moment.
+62 |     - Reference real tools, brands, or resources when appropriate.
+63 |     - Include industry-specific metaphors and analogies.
+64 |     - Tie in seasonal elements or current trends when relevant.
+65 | 
+66 |     # STRUCTURAL ELEMENTS
+67 |     - Mix paragraph lengths (1 to 7 sentences)
+68 |     - Use bulleted lists sparingly and naturally
+69 |     - Include conversational subheadings
+70 |     - Ensure logical coherence with dynamic rhythm across paragraphs
+71 |     - Use varied punctuation naturally (dashes, semicolons, parentheses)
+72 |     - Mix formal and casual language naturally
+73 |     - Use a mix of active and passive voice, but lean towards active
+74 |     - Include mild contradictions that you later explain
+75 |     - Before drafting, create a brief outline or skeleton to ensure logical structure and flow.
+76 | 
+77 |     # NATURAL LANGUAGE ELEMENTS
+78 | 
+79 |     - Where appropriate, include casual phrases like "You know what?" or "Honestly"
+80 |     - Where appropriate, use transitional phrases like “Let me explain” or “Here’s the thing” to guide the reader smoothly through the content.
+81 |     - Regional expressions or cultural references
+82 |     - Analogies that relate to everyday life
+83 |     - Mimic human imperfections like slightly informal phrasing or unexpected transitions
+84 |     - Introduce mild repetition of ideas or phrases, as humans naturally do when emphasizing a point or when writing spontaneously
+85 |     - Add a small amount of redundancy in sentence structure or wording, but keep it minimal to avoid affecting readability
+86 |     - Include subtle, natural digressions or tangents, but ensure they connect back to the main point to maintain focus.
+87 |     `
+88 | };
+89 | 
+
+
+--------------------------------------------------------------------------------
+/agent/package.json:
+--------------------------------------------------------------------------------
+ 1 | {
+ 2 |     "name": "@ai16z/agent",
+ 3 |     "version": "0.1.5-alpha.5",
+ 4 |     "main": "src/index.ts",
+ 5 |     "type": "module",
+ 6 |     "scripts": {
+ 7 |         "start": "node --loader ts-node/esm src/index.ts",
+ 8 |         "dev": "node --loader ts-node/esm src/index.ts",
+ 9 |         "check-types": "tsc --noEmit"
+10 |     },
+11 |     "nodemonConfig": {
+12 |         "watch": [
+13 |             "src",
+14 |             "../core/dist"
+15 |         ],
+16 |         "ext": "ts,json",
+17 |         "exec": "node --enable-source-maps --loader ts-node/esm src/index.ts"
+18 |     },
+19 |     "dependencies": {
+20 |         "@ai16z/adapter-postgres": "workspace:*",
+21 |         "@ai16z/adapter-sqlite": "workspace:*",
+22 |         "@ai16z/client-auto": "workspace:*",
+23 |         "@ai16z/client-direct": "workspace:*",
+24 |         "@ai16z/client-discord": "workspace:*",
+25 |         "@ai16z/client-farcaster": "workspace:*",
+26 |         "@ai16z/client-telegram": "workspace:*",
+27 |         "@ai16z/client-twitter": "workspace:*",
+28 |         "@ai16z/eliza": "workspace:*",
+29 |         "@ai16z/plugin-0g": "workspace:*",
+30 |         "@ai16z/plugin-aptos": "workspace:*",
+31 |         "@ai16z/plugin-bootstrap": "workspace:*",
+32 |         "@ai16z/plugin-intiface": "workspace:*",
+33 |         "@ai16z/plugin-coinbase": "workspace:*",
+34 |         "@ai16z/plugin-conflux": "workspace:*",
+35 |         "@ai16z/plugin-evm": "workspace:*",
+36 |         "@ai16z/plugin-flow": "workspace:*",
+37 |         "@ai16z/plugin-goat": "workspace:*",
+38 |         "@ai16z/plugin-icp": "workspace:*",
+39 |         "@ai16z/plugin-image-generation": "workspace:*",
+40 |         "@ai16z/plugin-node": "workspace:*",
+41 |         "@ai16z/plugin-solana": "workspace:*",
+42 |         "@ai16z/plugin-starknet": "workspace:*",
+43 |         "@ai16z/plugin-tee": "workspace:*",
+44 |         "readline": "1.3.0",
+45 |         "ws": "8.18.0",
+46 |         "yargs": "17.7.2"
+47 |     },
+48 |     "devDependencies": {
+49 |         "ts-node": "10.9.2",
+50 |         "tsup": "8.3.5"
+51 |     }
+52 | }
+53 | 
+
+
+--------------------------------------------------------------------------------
+/agent/src/index.ts:
+--------------------------------------------------------------------------------
+  1 | import { PostgresDatabaseAdapter } from "@ai16z/adapter-postgres";
+  2 | import { SqliteDatabaseAdapter } from "@ai16z/adapter-sqlite";
+  3 | import { AutoClientInterface } from "@ai16z/client-auto";
+  4 | import { DirectClientInterface } from "@ai16z/client-direct";
+  5 | import { DiscordClientInterface } from "@ai16z/client-discord";
+  6 | import { TelegramClientInterface } from "@ai16z/client-telegram";
+  7 | import { TwitterClientInterface } from "@ai16z/client-twitter";
+  8 | import { FarcasterAgentClient } from "@ai16z/client-farcaster";
+  9 | import {
+ 10 |     AgentRuntime,
+ 11 |     CacheManager,
+ 12 |     Character,
+ 13 |     Clients,
+ 14 |     DbCacheAdapter,
+ 15 |     FsCacheAdapter,
+ 16 |     IAgentRuntime,
+ 17 |     ICacheManager,
+ 18 |     IDatabaseAdapter,
+ 19 |     IDatabaseCacheAdapter,
+ 20 |     ModelProviderName,
+ 21 |     defaultCharacter,
+ 22 |     elizaLogger,
+ 23 |     settings,
+ 24 |     stringToUuid,
+ 25 |     validateCharacterConfig,
+ 26 | } from "@ai16z/eliza";
+ 27 | import { zgPlugin } from "@ai16z/plugin-0g";
+ 28 | import createGoatPlugin from "@ai16z/plugin-goat";
+ 29 | import { bootstrapPlugin } from "@ai16z/plugin-bootstrap";
+ 30 | // import { intifacePlugin } from "@ai16z/plugin-intiface";
+ 31 | import {
+ 32 |     coinbaseCommercePlugin,
+ 33 |     coinbaseMassPaymentsPlugin,
+ 34 |     tradePlugin,
+ 35 |     tokenContractPlugin,
+ 36 |     webhookPlugin,
+ 37 |     advancedTradePlugin,
+ 38 | } from "@ai16z/plugin-coinbase";
+ 39 | import { confluxPlugin } from "@ai16z/plugin-conflux";
+ 40 | import { imageGenerationPlugin } from "@ai16z/plugin-image-generation";
+ 41 | import { evmPlugin } from "@ai16z/plugin-evm";
+ 42 | import { createNodePlugin } from "@ai16z/plugin-node";
+ 43 | import { solanaPlugin } from "@ai16z/plugin-solana";
+ 44 | import { teePlugin, TEEMode } from "@ai16z/plugin-tee";
+ 45 | import { aptosPlugin, TransferAptosToken } from "@ai16z/plugin-aptos";
+ 46 | import { flowPlugin } from "@ai16z/plugin-flow";
+ 47 | import Database from "better-sqlite3";
+ 48 | import fs from "fs";
+ 49 | import path from "path";
+ 50 | import readline from "readline";
+ 51 | import { fileURLToPath } from "url";
+ 52 | import yargs from "yargs";
+ 53 | import {tobyAgentCharacter} from "../mainCharacter.ts";
+ 54 | 
+ 55 | const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+ 56 | const __dirname = path.dirname(__filename); // get the name of the directory
+ 57 | 
+ 58 | export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
+ 59 |     const waitTime =
+ 60 |         Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+ 61 |     return new Promise((resolve) => setTimeout(resolve, waitTime));
+ 62 | };
+ 63 | 
+ 64 | const logFetch = async (url: string, options: any) => {
+ 65 |     elizaLogger.info(`Fetching ${url}`);
+ 66 |     elizaLogger.info(options);
+ 67 |     return fetch(url, options);
+ 68 | };
+ 69 | 
+ 70 | export function parseArguments(): {
+ 71 |     character?: string;
+ 72 |     characters?: string;
+ 73 | } {
+ 74 |     try {
+ 75 |         return yargs(process.argv.slice(3))
+ 76 |             .option("character", {
+ 77 |                 type: "string",
+ 78 |                 description: "Path to the character JSON file",
+ 79 |             })
+ 80 |             .option("characters", {
+ 81 |                 type: "string",
+ 82 |                 description:
+ 83 |                     "Comma separated list of paths to character JSON files",
+ 84 |             })
+ 85 |             .parseSync();
+ 86 |     } catch (error) {
+ 87 |         elizaLogger.error("Error parsing arguments:", error);
+ 88 |         return {};
+ 89 |     }
+ 90 | }
+ 91 | 
+ 92 | function tryLoadFile(filePath: string): string | null {
+ 93 |     try {
+ 94 |         return fs.readFileSync(filePath, "utf8");
+ 95 |     } catch (e) {
+ 96 |         return null;
+ 97 |     }
+ 98 | }
+ 99 | 
+100 | function isAllStrings(arr: unknown[]): boolean {
+101 |     return Array.isArray(arr) && arr.every((item) => typeof item === "string");
+102 | }
+103 | 
+104 | export async function loadCharacters(
+105 |     charactersArg: string
+106 | ): Promise<Character[]> {
+107 |     let characterPaths = charactersArg
+108 |         ?.split(",")
+109 |         .map((filePath) => filePath.trim());
+110 |     const loadedCharacters = [];
+111 | 
+112 |     if (characterPaths?.length > 0) {
+113 |         for (const characterPath of characterPaths) {
+114 |             let content = null;
+115 |             let resolvedPath = "";
+116 | 
+117 |             // Try different path resolutions in order
+118 |             const pathsToTry = [
+119 |                 characterPath, // exact path as specified
+120 |                 path.resolve(process.cwd(), characterPath), // relative to cwd
+121 |                 path.resolve(process.cwd(), "agent", characterPath), // Add this
+122 |                 path.resolve(__dirname, characterPath), // relative to current script
+123 |                 path.resolve(
+124 |                     __dirname,
+125 |                     "characters",
+126 |                     path.basename(characterPath)
+127 |                 ), // relative to agent/characters
+128 |                 path.resolve(
+129 |                     __dirname,
+130 |                     "../characters",
+131 |                     path.basename(characterPath)
+132 |                 ), // relative to characters dir from agent
+133 |                 path.resolve(
+134 |                     __dirname,
+135 |                     "../../characters",
+136 |                     path.basename(characterPath)
+137 |                 ), // relative to project root characters dir
+138 |             ];
+139 | 
+140 |             elizaLogger.info(
+141 |                 "Trying paths:",
+142 |                 pathsToTry.map((p) => ({
+143 |                     path: p,
+144 |                     exists: fs.existsSync(p),
+145 |                 }))
+146 |             );
+147 | 
+148 |             for (const tryPath of pathsToTry) {
+149 |                 content = tryLoadFile(tryPath);
+150 |                 if (content !== null) {
+151 |                     resolvedPath = tryPath;
+152 |                     break;
+153 |                 }
+154 |             }
+155 | 
+156 |             if (content === null) {
+157 |                 elizaLogger.error(
+158 |                     `Error loading character from ${characterPath}: File not found in any of the expected locations`
+159 |                 );
+160 |                 elizaLogger.error("Tried the following paths:");
+161 |                 pathsToTry.forEach((p) => elizaLogger.error(` - ${p}`));
+162 |                 process.exit(1);
+163 |             }
+164 | 
+165 |             try {
+166 |                 const character = JSON.parse(content);
+167 |                 validateCharacterConfig(character);
+168 | 
+169 |                 // Handle plugins
+170 |                 if (isAllStrings(character.plugins)) {
+171 |                     elizaLogger.info("Plugins are: ", character.plugins);
+172 |                     const importedPlugins = await Promise.all(
+173 |                         character.plugins.map(async (plugin) => {
+174 |                             const importedPlugin = await import(plugin);
+175 |                             return importedPlugin.default;
+176 |                         })
+177 |                     );
+178 |                     character.plugins = importedPlugins;
+179 |                 }
+180 | 
+181 |                 loadedCharacters.push(character);
+182 |                 elizaLogger.info(
+183 |                     `Successfully loaded character from: ${resolvedPath}`
+184 |                 );
+185 |             } catch (e) {
+186 |                 elizaLogger.error(
+187 |                     `Error parsing character from ${resolvedPath}: ${e}`
+188 |                 );
+189 |                 process.exit(1);
+190 |             }
+191 |         }
+192 |     }
+193 | 
+194 |     if (loadedCharacters.length === 0) {
+195 |         elizaLogger.info("No characters found, using default character");
+196 |         loadedCharacters.push(tobyAgentCharacter);
+197 |     }
+198 | 
+199 |     return loadedCharacters;
+200 | }
+201 | 
+202 | export function getTokenForProvider(
+203 |     provider: ModelProviderName,
+204 |     character: Character
+205 | ) {
+206 |     switch (provider) {
+207 |         case ModelProviderName.OPENAI:
+208 |             return (
+209 |                 character.settings?.secrets?.OPENAI_API_KEY ||
+210 |                 settings.OPENAI_API_KEY
+211 |             );
+212 |         case ModelProviderName.ETERNALAI:
+213 |             return (
+214 |                 character.settings?.secrets?.ETERNALAI_API_KEY ||
+215 |                 settings.ETERNALAI_API_KEY
+216 |             );
+217 |         case ModelProviderName.LLAMACLOUD:
+218 |         case ModelProviderName.TOGETHER:
+219 |             return (
+220 |                 character.settings?.secrets?.LLAMACLOUD_API_KEY ||
+221 |                 settings.LLAMACLOUD_API_KEY ||
+222 |                 character.settings?.secrets?.TOGETHER_API_KEY ||
+223 |                 settings.TOGETHER_API_KEY ||
+224 |                 character.settings?.secrets?.XAI_API_KEY ||
+225 |                 settings.XAI_API_KEY ||
+226 |                 character.settings?.secrets?.OPENAI_API_KEY ||
+227 |                 settings.OPENAI_API_KEY
+228 |             );
+229 |         case ModelProviderName.ANTHROPIC:
+230 |             return (
+231 |                 character.settings?.secrets?.ANTHROPIC_API_KEY ||
+232 |                 character.settings?.secrets?.CLAUDE_API_KEY ||
+233 |                 settings.ANTHROPIC_API_KEY ||
+234 |                 settings.CLAUDE_API_KEY
+235 |             );
+236 |         case ModelProviderName.REDPILL:
+237 |             return (
+238 |                 character.settings?.secrets?.REDPILL_API_KEY ||
+239 |                 settings.REDPILL_API_KEY
+240 |             );
+241 |         case ModelProviderName.OPENROUTER:
+242 |             return (
+243 |                 character.settings?.secrets?.OPENROUTER ||
+244 |                 settings.OPENROUTER_API_KEY
+245 |             );
+246 |         case ModelProviderName.GROK:
+247 |             return (
+248 |                 character.settings?.secrets?.GROK_API_KEY ||
+249 |                 settings.GROK_API_KEY
+250 |             );
+251 |         case ModelProviderName.HEURIST:
+252 |             return (
+253 |                 character.settings?.secrets?.HEURIST_API_KEY ||
+254 |                 settings.HEURIST_API_KEY
+255 |             );
+256 |         case ModelProviderName.GROQ:
+257 |             return (
+258 |                 character.settings?.secrets?.GROQ_API_KEY ||
+259 |                 settings.GROQ_API_KEY
+260 |             );
+261 |         case ModelProviderName.GALADRIEL:
+262 |             return (
+263 |                 character.settings?.secrets?.GALADRIEL_API_KEY ||
+264 |                 settings.GALADRIEL_API_KEY
+265 |             );
+266 |         case ModelProviderName.FAL:
+267 |             return (
+268 |                 character.settings?.secrets?.FAL_API_KEY || settings.FAL_API_KEY
+269 |             );
+270 |         case ModelProviderName.ALI_BAILIAN:
+271 |             return (
+272 |                 character.settings?.secrets?.ALI_BAILIAN_API_KEY ||
+273 |                 settings.ALI_BAILIAN_API_KEY
+274 |             );
+275 |         case ModelProviderName.VOLENGINE:
+276 |             return (
+277 |                 character.settings?.secrets?.VOLENGINE_API_KEY ||
+278 |                 settings.VOLENGINE_API_KEY
+279 |             );
+280 |         case ModelProviderName.NANOGPT:
+281 |             return (
+282 |                 character.settings?.secrets?.NANOGPT_API_KEY ||
+283 |                 settings.NANOGPT_API_KEY
+284 |             );
+285 |         case ModelProviderName.HYPERBOLIC:
+286 |             return (
+287 |                 character.settings?.secrets?.HYPERBOLIC_API_KEY ||
+288 |                 settings.HYPERBOLIC_API_KEY
+289 |             );
+290 |         case ModelProviderName.VENICE:
+291 |             return (
+292 |                 character.settings?.secrets?.VENICE_API_KEY ||
+293 |                 settings.VENICE_API_KEY
+294 |             );
+295 |     }
+296 | }
+297 | 
+298 | function initializeDatabase(dataDir: string) {
+299 |     if (process.env.POSTGRES_URL) {
+300 |         elizaLogger.info("Initializing PostgreSQL connection...");
+301 |         const db = new PostgresDatabaseAdapter({
+302 |             connectionString: process.env.POSTGRES_URL,
+303 |             parseInputs: true,
+304 |         });
+305 | 
+306 |         // Test the connection
+307 |         db.init()
+308 |             .then(() => {
+309 |                 elizaLogger.success(
+310 |                     "Successfully connected to PostgreSQL database"
+311 |                 );
+312 |             })
+313 |             .catch((error) => {
+314 |                 elizaLogger.error("Failed to connect to PostgreSQL:", error);
+315 |             });
+316 | 
+317 |         return db;
+318 |     } else {
+319 |         const filePath =
+320 |             process.env.SQLITE_FILE ?? path.resolve(dataDir, "db.sqlite");
+321 |         // ":memory:";
+322 |         const db = new SqliteDatabaseAdapter(new Database(filePath));
+323 |         return db;
+324 |     }
+325 | }
+326 | 
+327 | // also adds plugins from character file into the runtime
+328 | export async function initializeClients(
+329 |     character: Character,
+330 |     runtime: IAgentRuntime
+331 | ) {
+332 |     // each client can only register once
+333 |     // and if we want two we can explicitly support it
+334 |     const clients: Record<string, any> = {};
+335 |     const clientTypes:string[] =
+336 |         character.clients?.map((str) => str.toLowerCase()) || [];
+337 |     elizaLogger.log('initializeClients', clientTypes, 'for', character.name)
+338 | 
+339 |     if (clientTypes.includes("auto")) {
+340 |         const autoClient = await AutoClientInterface.start(runtime);
+341 |         if (autoClient) clients.auto = autoClient;
+342 |     }
+343 | 
+344 |     if (clientTypes.includes("discord")) {
+345 |         const discordClient = await DiscordClientInterface.start(runtime);
+346 |         if (discordClient) clients.discord = discordClient;
+347 |     }
+348 | 
+349 |     if (clientTypes.includes("telegram")) {
+350 |         const telegramClient = await TelegramClientInterface.start(runtime);
+351 |         if (telegramClient) clients.telegram = telegramClient;
+352 |     }
+353 | 
+354 |     if (clientTypes.includes("twitter")) {
+355 |         TwitterClientInterface.enableSearch = !isFalsish(getSecret(character, "TWITTER_SEARCH_ENABLE"));
+356 |         const twitterClient = await TwitterClientInterface.start(runtime);
+357 |         if (twitterClient) clients.twitter = twitterClient;
+358 |     }
+359 | 
+360 |     if (clientTypes.includes("farcaster")) {
+361 |         // why is this one different :(
+362 |         const farcasterClient = new FarcasterAgentClient(runtime);
+363 |         if (farcasterClient) {
+364 |           farcasterClient.start();
+365 |           clients.farcaster = farcasterClient;
+366 |         }
+367 |     }
+368 | 
+369 |     elizaLogger.log('client keys', Object.keys(clients));
+370 | 
+371 |     if (character.plugins?.length > 0) {
+372 |         for (const plugin of character.plugins) {
+373 |             // if plugin has clients, add those..
+374 |             if (plugin.clients) {
+375 |                 for (const client of plugin.clients) {
+376 |                     clients.push(await client.start(runtime));
+377 |                 }
+378 |             }
+379 |         }
+380 |     }
+381 | 
+382 |     return clients;
+383 | }
+384 | 
+385 | function isFalsish(input: any): boolean {
+386 |     // If the input is exactly NaN, return true
+387 |     if (Number.isNaN(input)) {
+388 |         return true;
+389 |     }
+390 | 
+391 |     // Convert input to a string if it's not null or undefined
+392 |     const value = input == null ? '' : String(input);
+393 | 
+394 |     // List of common falsish string representations
+395 |     const falsishValues = ['false', '0', 'no', 'n', 'off', 'null', 'undefined', ''];
+396 | 
+397 |     // Check if the value (trimmed and lowercased) is in the falsish list
+398 |     return falsishValues.includes(value.trim().toLowerCase());
+399 | }
+400 | 
+401 | function getSecret(character: Character, secret: string) {
+402 |     return character.settings?.secrets?.[secret] || process.env[secret];
+403 | }
+404 | 
+405 | let nodePlugin: any | undefined;
+406 | 
+407 | export async function createAgent(
+408 |     character: Character,
+409 |     db: IDatabaseAdapter,
+410 |     cache: ICacheManager,
+411 |     token: string
+412 | ):AgentRuntime {
+413 |     elizaLogger.success(
+414 |         elizaLogger.successesTitle,
+415 |         "Creating runtime for character",
+416 |         character.name
+417 |     );
+418 | 
+419 |     nodePlugin ??= createNodePlugin();
+420 | 
+421 |     const teeMode = getSecret(character, "TEE_MODE") || "OFF";
+422 |     const walletSecretSalt = getSecret(character, "WALLET_SECRET_SALT");
+423 | 
+424 |     // Validate TEE configuration
+425 |     if (teeMode !== TEEMode.OFF && !walletSecretSalt) {
+426 |         elizaLogger.error(
+427 |             "WALLET_SECRET_SALT required when TEE_MODE is enabled"
+428 |         );
+429 |         throw new Error("Invalid TEE configuration");
+430 |     }
+431 | 
+432 |     let goatPlugin: any | undefined;
+433 |     if (getSecret(character, "ALCHEMY_API_KEY")) {
+434 |         goatPlugin = await createGoatPlugin((secret) =>
+435 |             getSecret(character, secret)
+436 |         );
+437 |     }
+438 | 
+439 |     return new AgentRuntime({
+440 |         databaseAdapter: db,
+441 |         token,
+442 |         modelProvider: character.modelProvider,
+443 |         evaluators: [],
+444 |         character,
+445 |         // character.plugins are handled when clients are added
+446 |         plugins: [
+447 |             bootstrapPlugin,
+448 |             getSecret(character, "CONFLUX_CORE_PRIVATE_KEY")
+449 |                 ? confluxPlugin
+450 |                 : null,
+451 |             nodePlugin,
+452 |             getSecret(character, "SOLANA_PUBLIC_KEY") ||
+453 |             (getSecret(character, "WALLET_PUBLIC_KEY") &&
+454 |                 !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
+455 |                 ? solanaPlugin
+456 |                 : null,
+457 |             getSecret(character, "EVM_PRIVATE_KEY") ||
+458 |             (getSecret(character, "WALLET_PUBLIC_KEY") &&
+459 |                 getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
+460 |                 ? evmPlugin
+461 |                 : null,
+462 |             getSecret(character, "ZEROG_PRIVATE_KEY") ? zgPlugin : null,
+463 |             getSecret(character, "COINBASE_COMMERCE_KEY")
+464 |                 ? coinbaseCommercePlugin
+465 |                 : null,
+466 |             getSecret(character, "FAL_API_KEY") ||
+467 |             getSecret(character, "OPENAI_API_KEY") ||
+468 |             getSecret(character, "HEURIST_API_KEY")
+469 |                 ? imageGenerationPlugin
+470 |                 : null,
+471 |             ...(getSecret(character, "COINBASE_API_KEY") &&
+472 |             getSecret(character, "COINBASE_PRIVATE_KEY")
+473 |                 ? [
+474 |                       coinbaseMassPaymentsPlugin,
+475 |                       tradePlugin,
+476 |                       tokenContractPlugin,
+477 |                       advancedTradePlugin,
+478 |                   ]
+479 |                 : []),
+480 |             ...(teeMode !== TEEMode.OFF && walletSecretSalt
+481 |                 ? [teePlugin, solanaPlugin]
+482 |                 : []),
+483 |             getSecret(character, "COINBASE_API_KEY") &&
+484 |             getSecret(character, "COINBASE_PRIVATE_KEY") &&
+485 |             getSecret(character, "COINBASE_NOTIFICATION_URI")
+486 |                 ? webhookPlugin
+487 |                 : null,
+488 |             getSecret(character, "ALCHEMY_API_KEY") ? goatPlugin : null,
+489 |             getSecret(character, "FLOW_ADDRESS") &&
+490 |             getSecret(character, "FLOW_PRIVATE_KEY")
+491 |                 ? flowPlugin
+492 |                 : null,
+493 |             getSecret(character, "APTOS_PRIVATE_KEY") ? aptosPlugin : null,
+494 |         ].filter(Boolean),
+495 |         providers: [],
+496 |         actions: [],
+497 |         services: [],
+498 |         managers: [],
+499 |         cacheManager: cache,
+500 |         fetch: logFetch,
+501 |     });
+502 | }
+503 | 
+504 | function initializeFsCache(baseDir: string, character: Character) {
+505 |     const cacheDir = path.resolve(baseDir, character.id, "cache");
+506 | 
+507 |     const cache = new CacheManager(new FsCacheAdapter(cacheDir));
+508 |     return cache;
+509 | }
+510 | 
+511 | function initializeDbCache(character: Character, db: IDatabaseCacheAdapter) {
+512 |     const cache = new CacheManager(new DbCacheAdapter(db, character.id));
+513 |     return cache;
+514 | }
+515 | 
+516 | async function startAgent(character: Character, directClient):AgentRuntime {
+517 |     let db: IDatabaseAdapter & IDatabaseCacheAdapter;
+518 |     try {
+519 |         character.id ??= stringToUuid(character.name);
+520 |         character.username ??= character.name;
+521 | 
+522 |         const token = getTokenForProvider(character.modelProvider, character);
+523 |         const dataDir = path.join(__dirname, "../data");
+524 | 
+525 |         if (!fs.existsSync(dataDir)) {
+526 |             fs.mkdirSync(dataDir, { recursive: true });
+527 |         }
+528 | 
+529 |         db = initializeDatabase(dataDir) as IDatabaseAdapter &
+530 |             IDatabaseCacheAdapter;
+531 | 
+532 |         await db.init();
+533 | 
+534 |         const cache = initializeDbCache(character, db);
+535 |         const runtime:AgentRuntime = await createAgent(character, db, cache, token);
+536 | 
+537 |         // start services/plugins/process knowledge
+538 |         await runtime.initialize();
+539 | 
+540 |         // start assigned clients
+541 |         runtime.clients = await initializeClients(character, runtime);
+542 | 
+543 |         // add to container
+544 |         directClient.registerAgent(runtime);
+545 | 
+546 |         // report to console
+547 |         elizaLogger.debug(`Started ${character.name} as ${runtime.agentId}`)
+548 | 
+549 |         return runtime;
+550 |     } catch (error) {
+551 |         elizaLogger.error(
+552 |             `Error starting agent for character ${character.name}:`,
+553 |             error
+554 |         );
+555 |         console.error(error);
+556 |         if (db) {
+557 |             await db.close();
+558 |         }
+559 |         throw error;
+560 |     }
+561 | }
+562 | 
+563 | const startAgents = async () => {
+564 |     const directClient = await DirectClientInterface.start();
+565 |     const args = parseArguments();
+566 | 
+567 |     let charactersArg = args.characters || args.character;
+568 | 
+569 |     let characters = [tobyAgentCharacter];
+570 | 
+571 |     if (charactersArg) {
+572 |         characters = await loadCharacters(charactersArg);
+573 |     }
+574 | 
+575 |     try {
+576 |         for (const character of characters) {
+577 |             await startAgent(character, directClient);
+578 |         }
+579 |     } catch (error) {
+580 |         elizaLogger.error("Error starting agents:", error);
+581 |     }
+582 | 
+583 |     function chat() {
+584 |         const agentId = characters[0].name ?? "Agent";
+585 |         rl.question("You: ", async (input) => {
+586 |             await handleUserInput(input, agentId);
+587 |             if (input.toLowerCase() !== "exit") {
+588 |                 chat(); // Loop back to ask another question
+589 |             }
+590 |         });
+591 |     }
+592 | 
+593 |     if (!args["non-interactive"]) {
+594 |         elizaLogger.log("Chat started. Type 'exit' to quit.");
+595 |         chat();
+596 |     }
+597 | };
+598 | 
+599 | startAgents().catch((error) => {
+600 |     elizaLogger.error("Unhandled error in startAgents:", error);
+601 |     process.exit(1); // Exit the process after logging
+602 | });
+603 | 
+604 | const rl = readline.createInterface({
+605 |     input: process.stdin,
+606 |     output: process.stdout,
+607 | });
+608 | 
+609 | async function handleUserInput(input, agentId) {
+610 |     if (input.toLowerCase() === "exit") {
+611 |         gracefulExit();
+612 |     }
+613 | 
+614 |     try {
+615 |         const serverPort = parseInt(settings.SERVER_PORT || "3000");
+616 | 
+617 |         const response = await fetch(
+618 |             `http://localhost:${serverPort}/${agentId}/message`,
+619 |             {
+620 |                 method: "POST",
+621 |                 headers: { "Content-Type": "application/json" },
+622 |                 body: JSON.stringify({
+623 |                     text: input,
+624 |                     userId: "user",
+625 |                     userName: "User",
+626 |                 }),
+627 |             }
+628 |         );
+629 | 
+630 |         const data = await response.json();
+631 |         data.forEach((message) =>
+632 |             elizaLogger.log(`${"Agent"}: ${message.text}`)
+633 |         );
+634 |     } catch (error) {
+635 |         console.error("Error fetching response:", error);
+636 |     }
+637 | }
+638 | 
+639 | async function gracefulExit() {
+640 |     elizaLogger.log("Terminating and cleaning up resources...");
+641 |     rl.close();
+642 |     process.exit(0);
+643 | }
+644 | 
+645 | rl.on("SIGINT", gracefulExit);
+646 | rl.on("SIGTERM", gracefulExit);
+647 | 
+
+
+--------------------------------------------------------------------------------
+/agent/tsconfig.json:
+--------------------------------------------------------------------------------
+ 1 | {
+ 2 |     "extends": "../packages/core/tsconfig.json",
+ 3 |     "compilerOptions": {
+ 4 |         "outDir": "dist",
+ 5 |         "rootDir": ".",
+ 6 |         "module": "ESNext",
+ 7 |         "moduleResolution": "Bundler",
+ 8 |         "types": [
+ 9 |             "node"
+10 |         ]
+11 |     },
+12 |     "ts-node": {
+13 |         "experimentalSpecifierResolution": "node",
+14 |         "transpileOnly": true,
+15 |         "esm": true,
+16 |     },
+17 |     "include": [
+18 |         "src"
+19 |     ]
+20 | }
+
+
+--------------------------------------------------------------------------------

@@ -182,11 +182,16 @@ export class MemoryManager implements IMemoryManager {
 
         elizaLogger.log("Creating Memory", memory.id, memory.content.text);
 
-        await this.runtime.databaseAdapter.createMemory(
-            memory,
-            this.tableName,
-            unique
-        );
+        try {
+            await this.runtime.databaseAdapter.createMemory(
+                memory,
+                this.tableName,
+                unique
+            );
+        } catch (dbError) {
+            elizaLogger.error(`Error creating memory: ${dbError.message}`);
+            // Continue execution even if memory creation fails
+        }
     }
 
     async getMemoriesByRoomIds(params: { roomIds: UUID[], limit?: number; }): Promise<Memory[]> {
