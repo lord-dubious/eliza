@@ -17,10 +17,15 @@ This guide will help you set up the Twitter client for your Eliza agent with aut
 ### Required Dependencies
 
 1. **Core Image Understanding** - Built into Eliza core with `IImageDescriptionService`
-2. **Video Understanding** - Uses built-in `IVideoService` or install enhanced video plugin:
+2. **Video Understanding Plugin** - Install the official video understanding plugin:
    ```bash
-   npm install @elizaos-plugins/plugin-node
+   npm install @elizaos/plugin-node
    ```
+   This plugin provides:
+   - Video processing and analysis capabilities
+   - YouTube video download and transcription
+   - Enhanced video content understanding
+   - Local video file processing
 3. **Vision Model Provider** - Configure one of:
    - OpenAI Vision API (recommended)
    - Google Gemini Vision
