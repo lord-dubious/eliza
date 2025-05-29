@@ -1,193 +1,287 @@
-# Twitter Client Setup with Media Posting
+# Twitter Client Setup Guide
 
-This guide will help you set up the Eliza Twitter client with media posting capabilities.
+## Overview
+
+This guide will help you set up the Twitter client for your Eliza agent with automated media posting capabilities, including AI-powered image and video understanding for contextual captions.
+
+## Features
+
+✅ **Complete Twitter Integration** - Full Twitter/X client with character-aware tweet generation  
+✅ **Automated Media Posting** - Posts images/videos from media folder at configurable intervals  
+✅ **AI-Powered Media Analysis** - Uses image and video understanding to generate contextual captions  
+✅ **Dual Posting Loops** - Separate intervals for regular tweets and media posts  
+✅ **Safety Features** - Dry run mode, error handling, rate limiting, media validation  
 
 ## Prerequisites
 
-1. A Twitter/X account
-2. Node.js and pnpm installed
-3. Media files for posting (images/videos)
+### Required Dependencies
 
-## Setup Steps
+1. **Core Image Understanding** - Built into Eliza core with `IImageDescriptionService`
+2. **Video Understanding** - Uses built-in `IVideoService` or install enhanced video plugin:
+   ```bash
+   npm install @elizaos-plugins/plugin-node
+   ```
+3. **Vision Model Provider** - Configure one of:
+   - OpenAI Vision API (recommended)
+   - Google Gemini Vision
+   - Local Florence model
 
-### 1. Install Dependencies
+### Twitter API Access
+
+You'll need a Twitter Developer account with API v2 access:
+1. Apply at [developer.twitter.com](https://developer.twitter.com)
+2. Create a new app and get your credentials
+3. Ensure you have read/write permissions for posting
+
+## Configuration
+
+### 1. Environment Variables
+
+Copy the example environment file and configure your settings:
 
 ```bash
-cd agent
-pnpm install
+cp agent/.env.example agent/.env
 ```
 
-### 2. Configure Environment Variables
+### 2. Twitter Credentials
 
-Copy the example environment file and configure it:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` with your Twitter credentials:
+Add your Twitter API credentials to `agent/.env`:
 
 ```env
-# Required Twitter credentials
+# Twitter API Configuration
 TWITTER_USERNAME=your_twitter_username
 TWITTER_PASSWORD=your_twitter_password
 TWITTER_EMAIL=your_twitter_email
 
-# Optional 2FA (recommended for security)
-TWITTER_2FA_SECRET=your_2fa_secret
+# Alternative: Use API keys (more reliable)
+TWITTER_API_KEY=your_api_key
+TWITTER_API_SECRET=your_api_secret
+TWITTER_ACCESS_TOKEN=your_access_token
+TWITTER_ACCESS_TOKEN_SECRET=your_access_token_secret
+```
 
-# Enable media posting
+### 3. Media Posting Configuration
+
+Configure automated media posting:
+
+```env
+# Media Posting Settings
 ENABLE_MEDIA_POSTING=true
-MEDIA_POST_INTERVAL_MIN=120  # 2 hours minimum
-MEDIA_POST_INTERVAL_MAX=240  # 4 hours maximum
-MEDIA_FOLDER_PATH=./agent/media
+MEDIA_POST_INTERVAL_MIN=120    # Minimum minutes between media posts
+MEDIA_POST_INTERVAL_MAX=240    # Maximum minutes between media posts
+MEDIA_FOLDER_PATH=./agent/media  # Path to your media files
 
-# Regular tweet posting
-ENABLE_TWITTER_POST_GENERATION=true
-POST_INTERVAL_MIN=90   # 1.5 hours minimum
-POST_INTERVAL_MAX=180  # 3 hours maximum
+# Safety Settings
+TWITTER_DRY_RUN=true          # Set to false when ready to go live
 ```
 
-### 3. Add Media Files
+### 4. Vision Model Configuration
 
-Place your media files in the `agent/media` folder:
+Configure your preferred vision model for image analysis:
+
+```env
+# For OpenAI Vision (recommended)
+OPENAI_API_KEY=your_openai_api_key
+
+# For Google Gemini Vision
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_api_key
+
+# Character configuration (in your character file)
+{
+  "imageVisionModelProvider": "openai",  // or "google" 
+  // ... other character settings
+}
+```
+
+## Media Setup
+
+### 1. Create Media Folder
+
+Create a folder for your media files:
 
 ```bash
-# Supported formats:
-# Images: .jpg, .jpeg, .png, .gif, .webp
-# Videos: .mp4, .mov, .avi
-
-cp your_images/* agent/media/
-cp your_videos/* agent/media/
+mkdir -p agent/media
 ```
 
-### 4. Test Configuration (Dry Run)
+### 2. Add Media Files
 
-Before posting to Twitter, test your setup:
+Add your images and videos to the media folder. Supported formats:
+
+**Images:**
+- `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`
+
+**Videos:**
+- `.mp4`, `.mov`, `.avi`
+
+Example structure:
+```
+agent/media/
+├── sunset.jpg
+├── city_timelapse.mp4
+├── nature_scene.png
+└── funny_moment.gif
+```
+
+### 3. Media Analysis Features
+
+The system will automatically:
+
+**For Images:**
+- Analyze visual content using AI vision models
+- Identify subjects, objects, settings, and mood
+- Generate character-appropriate captions
+- Detect text and notable details
+
+**For Videos:**
+- Analyze filename and metadata
+- Generate contextual descriptions
+- Create engaging captions matching your character's voice
+- Support for various video formats
+
+## Testing
+
+### 1. Dry Run Mode
+
+Always test with dry run mode first:
+
+```env
+TWITTER_DRY_RUN=true
+```
+
+This will:
+- Generate tweets without posting
+- Analyze media files
+- Show what would be posted in logs
+- Validate all configurations
+
+### 2. Run the Agent
+
+Start your agent:
 
 ```bash
-# Enable dry run mode
-echo "TWITTER_DRY_RUN=true" >> .env
-
-# Run the agent
-pnpm start
+npm run start
 ```
 
-You should see logs like:
+Watch the logs for:
+- ✅ Twitter client initialization
+- 🔍 Media analysis results
+- 🧪 Dry run tweet previews
+- ⏰ Posting schedule confirmations
+
+### 3. Sample Log Output
+
 ```
-📸 Starting media posting loop with interval 120-240 minutes
-📅 Next media post scheduled in 156 minutes
-🧪 DRY RUN - Would post media tweet: "Your generated tweet" with media: image.jpg
+🐦 Twitter client initialized successfully
+📁 Found 5 media files in ./agent/media
+🔍 Analyzing image: sunset.jpg
+📸 Image analysis: A breathtaking sunset over a calm ocean with vibrant orange and pink hues...
+🎨 Generating contextual tweet for: sunset.jpg
+✨ Generated contextual tweet: The way light dances across water reminds me why I love these quiet moments...
+🧪 DRY RUN - Would post media tweet: "The way light dances..." with media: sunset.jpg
+⏰ Next media post scheduled in 156 minutes
 ```
 
-### 5. Go Live
+## Going Live
 
-When you're ready to start posting:
+### 1. Disable Dry Run
 
-```bash
-# Disable dry run mode
-sed -i 's/TWITTER_DRY_RUN=true/TWITTER_DRY_RUN=false/' .env
+When you're satisfied with the testing:
 
-# Start the agent
-pnpm start
+```env
+TWITTER_DRY_RUN=false
 ```
 
-## Features
+### 2. Monitor Performance
 
-### Media Posting
-- Automatically posts media tweets at random intervals
-- Supports images and videos
-- Generates contextual captions based on your character
-- Configurable posting frequency
+Watch for:
+- Successful media uploads
+- Tweet posting confirmations
+- Rate limit compliance
+- Error handling
 
-### Regular Tweet Generation
-- Posts text-only tweets based on your character
-- Separate interval configuration from media posts
-- Character-aware content generation
+### 3. Adjust Settings
 
-### Safety Features
-- Dry run mode for testing
-- Configurable rate limiting
-- Error handling and logging
-- Media file validation
+Fine-tune based on performance:
+- Adjust posting intervals
+- Update media folder contents
+- Modify character traits for better captions
 
-## Configuration Options
+## Advanced Configuration
 
-### Media Posting Settings
+### Custom Vision Prompts
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ENABLE_MEDIA_POSTING` | `true` | Enable/disable media posting |
-| `MEDIA_POST_INTERVAL_MIN` | `120` | Minimum minutes between media posts |
-| `MEDIA_POST_INTERVAL_MAX` | `240` | Maximum minutes between media posts |
-| `MEDIA_FOLDER_PATH` | `./agent/media` | Path to media files |
+The system uses sophisticated prompts for media analysis that consider:
+- Character personality and voice
+- Visual content analysis
+- Contextual relevance
+- Engagement optimization
 
-### Tweet Generation Settings
+### Character Integration
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ENABLE_TWITTER_POST_GENERATION` | `true` | Enable/disable regular tweets |
-| `POST_INTERVAL_MIN` | `90` | Minimum minutes between regular tweets |
-| `POST_INTERVAL_MAX` | `180` | Maximum minutes between regular tweets |
-| `MAX_TWEET_LENGTH` | `280` | Maximum tweet length |
+Media captions automatically incorporate:
+- Character bio and traits
+- Communication style
+- Personality adjectives
+- Posting preferences
 
-### Safety Settings
+### Error Handling
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `TWITTER_DRY_RUN` | `false` | Test mode - doesn't actually post |
-| `TWITTER_RETRY_LIMIT` | `5` | Number of retry attempts |
-| `TWITTER_POLL_INTERVAL` | `120` | Polling interval in seconds |
+Robust error handling includes:
+- Service availability checks
+- Fallback analysis methods
+- Rate limit management
+- Media validation
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Login Failures**
-   - Verify credentials in `.env`
-   - Check 2FA configuration
-   - Ensure no rate limiting
+**Media Analysis Fails:**
+- Check vision model API keys
+- Verify image/video file formats
+- Ensure sufficient API quotas
 
-2. **No Media Files Found**
-   - Check `MEDIA_FOLDER_PATH` setting
-   - Verify file formats are supported
-   - Ensure files exist in the media folder
+**Twitter Posting Fails:**
+- Verify API credentials
+- Check rate limits
+- Ensure proper permissions
 
-3. **Media Posts Not Working**
-   - Check `ENABLE_MEDIA_POSTING=true`
-   - Verify media folder permissions
-   - Check logs for error messages
+**No Media Files Found:**
+- Check media folder path
+- Verify file permissions
+- Ensure supported formats
 
 ### Debug Mode
 
-Enable debug logging:
+Enable detailed logging:
 
-```bash
-DEBUG=eliza:* pnpm start
+```env
+DEBUG=eliza:*
 ```
 
-### Logs to Monitor
+### Support
 
-- `📸 Starting media posting loop` - Media posting enabled
-- `📅 Next media post scheduled` - Next post timing
-- `🎬 Generating media tweet` - Media tweet generation
-- `✅ Posted media tweet` - Successful media post
-- `🧪 DRY RUN` - Test mode active
+For issues:
+1. Check logs for specific error messages
+2. Verify all environment variables
+3. Test with dry run mode first
+4. Ensure media files are accessible
 
-## Security Best Practices
+## Performance Tips
 
-1. **Never commit `.env` files**
-2. **Use 2FA when possible**
-3. **Start with dry run mode**
-4. **Monitor API usage**
-5. **Keep credentials secure**
-6. **Regular backup of media files**
+1. **Optimize Media Files:**
+   - Keep images under 5MB
+   - Use compressed video formats
+   - Organize files by content type
 
-## Support
+2. **Monitor API Usage:**
+   - Track vision API calls
+   - Monitor Twitter rate limits
+   - Adjust posting frequency as needed
 
-For issues or questions:
-1. Check the troubleshooting section
-2. Review debug logs
-3. Verify configuration settings
-4. Check media file formats and permissions
+3. **Character Tuning:**
+   - Refine character traits for better captions
+   - Test different media types
+   - Adjust posting intervals based on engagement
 
+The Twitter client with media understanding provides a powerful way to create engaging, contextual social media content that truly reflects your character's personality and perspective!
