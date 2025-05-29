@@ -55,11 +55,11 @@ export default function Page({ agentId }: { agentId: UUID }) {
    
     useEffect(() => {
         scrollToBottom();
-    }, [queryClient.getQueryData(["messages", agentId])]);
+    }, [queryClient.getQueryData(["messages", agentId]), scrollToBottom]);
 
     useEffect(() => {
         scrollToBottom();
-    }, []);
+    }, [scrollToBottom]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
