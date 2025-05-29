@@ -216,12 +216,7 @@ async function jsonToCharacter(
         `Constructing plugins for ${character.name} character ` +
         `(count=${character.plugins.length})`,
     );
-    const pluginConstructors = await handlePluginImporting(character.plugins);
-    const getSetting = (key: string) => settings[key];
-    character.plugins = [];
-    for (const pluginConstructor of pluginConstructors) {
-        character.plugins.push(await pluginConstructor(getSetting));
-    }
+    character.plugins = await handlePluginImporting(character.plugins);
     elizaLogger.info(
         character.name,
         "loaded plugins:",

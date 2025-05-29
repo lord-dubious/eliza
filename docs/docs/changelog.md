@@ -73,7 +73,7 @@
 
 ## v0.25.8 (February 24, 2025)
 
-#### Major changes since [v0.25.6-alpha.1](https://github.com/elizaOS/eliza/releases/tag/v0.25.6-alpha.1)
+#### Major changes since [v0.25.6-alpha.1]()
 
 #### Features
 
@@ -466,7 +466,7 @@ General Code Fixes & Minor Enhancements
 * fix: docker images+compose and broken documentation by @JoeyKhd in https://github.com/elizaOS/eliza/pull/2347
 * Fix github client README.md by @thomasWos in https://github.com/elizaOS/eliza/pull/2346
 * feat: groq image vision provider by @rferrari in https://github.com/elizaOS/eliza/pull/2342
-* improvement: using strict types to avoid erorrs like issue 2164 by @ai16z-demirix in https://github.com/elizaOS/eliza/pull/2220
+* improvement: using strict types to avoid errors like issue 2164 by @ai16z-demirix in https://github.com/elizaOS/eliza/pull/2220
 * fix: formatting in Browser section of README.md by @derrekcoleman in https://github.com/elizaOS/eliza/pull/2336
 * Update README_TR.md by @sukrucildirr in https://github.com/elizaOS/eliza/pull/2334
 * feat: (ragKnowledge) Enhance RAG knowledge handling by @augchan42 in https://github.com/elizaOS/eliza/pull/2351
@@ -1061,10 +1061,10 @@ General Code Fixes & Minor Enhancements
 - prevent repeated login by reusing client-twitter session #2129
 - fix the chat stuck in infinite loop #1755
 - fix client-discord join voice action #2160
-- replace invalid toghether ai medium model #2173
+- replace invalid together ai medium model #2173
 - insert missing langdetect on plugin-tts package.json #2175
 - Apply model settings for images and remove duplicate files #2118
-- clientConfig.telegram.isPartOfTeam misstype #2103
+- clientConfig.telegram.isPartOfTeam mistype #2103
 - fix starknet plugin by replacing walletProvider with portfolio provider #2029
 - correct SUI/USD price calculation #2150
 - deepseek support in getTokenForProvider #2179
@@ -1229,7 +1229,7 @@ Complete changelog:
 * feat: Add Irys plugin by @Hugo-SEQUIER in https://github.com/elizaOS/eliza/pull/1708
 * fix: Fix plugin loading from a character.json file by @treppers in https://github.com/elizaOS/eliza/pull/2095
 * feat: add Heurist embedding model by @tsubasakong in https://github.com/elizaOS/eliza/pull/2093
-* fix: clientConfig.telegram.isPartOfTeam misstype by @rferrari in https://github.com/elizaOS/eliza/pull/2103
+* fix: clientConfig.telegram.isPartOfTeam mistype by @rferrari in https://github.com/elizaOS/eliza/pull/2103
 * docs: Add Verified Inference docs by @maciejwitowski in https://github.com/elizaOS/eliza/pull/2125
 * fix: Update clients.md to fix package name by @prasadabhishek in https://github.com/elizaOS/eliza/pull/2091
 * feat: support autonome platform by @autonome-ai in https://github.com/elizaOS/eliza/pull/2121
@@ -1267,7 +1267,7 @@ Complete changelog:
 * feat: TTS(Text2Speech) with over 15 languages support! by @tomguluson92 in https://github.com/elizaOS/eliza/pull/2110
 * test: moving uuid.tests to correct __tests__ directory by @ai16z-demirix in https://github.com/elizaOS/eliza/pull/2168
 * tests: coinbase plugin - adding tests for coinbase plugin by @ai16z-demirix in https://github.com/elizaOS/eliza/pull/2170
-* Fix: replace invalid toghether ai medium model by @Jonatan-Chaverri in https://github.com/elizaOS/eliza/pull/2173
+* Fix: replace invalid together ai medium model by @Jonatan-Chaverri in https://github.com/elizaOS/eliza/pull/2173
 * fix: insert missing langdetect on plugin-tts package.json by @rferrari in https://github.com/elizaOS/eliza/pull/2175
 * fix(client-twitter): add mention deduplication utility by @nhodges in https://github.com/elizaOS/eliza/pull/2178
 * feat: 🎈 perf(vscode): Set file nesting for md and DockerFile by @AAAkater in https://github.com/elizaOS/eliza/pull/2177
@@ -2054,7 +2054,7 @@ Complete changelog:
 * docs: Create best-practices.md documentation by @snobbee in https://github.com/ai16z/eliza/pull/463
 * feat: Added TWITTER_COOKIE example on quickstart.md by @haeunchin in https://github.com/ai16z/eliza/pull/476
 * feat: Improve knowledge embeddings by @tarrencev in https://github.com/ai16z/eliza/pull/472
-* feat: improve type saftey by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/494
+* feat: improve type safety by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/494
 * fix: improve embeddings by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/496
 * node-v by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/501
 * fix: deps by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/503
@@ -2088,7 +2088,7 @@ Complete changelog:
 * fix: bump echogarden to fix case sensitive issue by @0xFlicker in https://github.com/ai16z/eliza/pull/561
 * Improved Twitter Documentation by @grallc in https://github.com/ai16z/eliza/pull/559
 * fix: sql command by @0xFlicker in https://github.com/ai16z/eliza/pull/560
-* fix: remove db adapters depencies from core and remove plugin-node from telegram  by @bmgalego in https://github.com/ai16z/eliza/pull/571
+* fix: remove db adapters dependencies from core and remove plugin-node from telegram  by @bmgalego in https://github.com/ai16z/eliza/pull/571
 * fix: add missing documents and knowledge memory managers to runtime interface by @bmgalego in https://github.com/ai16z/eliza/pull/572
 * fix: remove postinstall script from plugin-coinbase by @bmgalego in https://github.com/ai16z/eliza/pull/573
 * fix: postgres by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/557
@@ -2126,7 +2126,7 @@ Complete changelog:
 * fix: add Memory Manager getMemoriesByRoomIds missing tableName param by @bmgalego in https://github.com/ai16z/eliza/pull/602
 * fix: time prompt to include UTC, convert to verbose english to help prompting by @odilitime in https://github.com/ai16z/eliza/pull/603
 * feat: add knowledge to state by @bmgalego in https://github.com/ai16z/eliza/pull/600
-* feat: Adding tests for actions and generation. Skiping test step in defaultCharacters by @ai16z-demirix in https://github.com/ai16z/eliza/pull/591
+* feat: Adding tests for actions and generation. Skipping test step in defaultCharacters by @ai16z-demirix in https://github.com/ai16z/eliza/pull/591
 * feat: sell simulation service by @MarcoMandar in https://github.com/ai16z/eliza/pull/597
 * fix: use correct getCachedEmbeddings query_field_sub_name by @bmgalego in https://github.com/ai16z/eliza/pull/607
 * fix: knowledge module exporting process by @bmgalego in https://github.com/ai16z/eliza/pull/609
@@ -2284,6 +2284,78 @@ Complete changelog:
 </details>
 
 #### Full Changelog: https://github.com/ai16z/eliza/compare/v0.1.3...v0.1.5
+
+---
+
+## v0.1.4-alpha.3 (November 28, 2024)
+
+#### What's Changed
+
+* feat: adding back the renovate file for automated security scanning by @sirkitree in https://github.com/ai16z/eliza/pull/358
+* feat: readme and linting by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/449
+* fix: postgres embedding issues by @tarrencev in https://github.com/ai16z/eliza/pull/425
+* fix: X dry run by @laser-riot in https://github.com/ai16z/eliza/pull/452
+* Add npm install instructions to homepage header by @null-hax in https://github.com/ai16z/eliza/pull/459
+* docs: Fix my name in stream notes by @odilitime in https://github.com/ai16z/eliza/pull/442
+* feat: create-eliza-app by @coffeeorgreentea in https://github.com/ai16z/eliza/pull/462
+* fix: Add missing fuzzystrmatch extension for levenshtein() method to postgresql schema.sql definition by @martincik in https://github.com/ai16z/eliza/pull/460
+* fix: Fixing failling tests token.test.ts and videoGeneration.test.ts by @ai16z-demirix in https://github.com/ai16z/eliza/pull/465
+* feat: init github client by @tarrencev in https://github.com/ai16z/eliza/pull/456
+* docs: Add Discord username question by @odilitime in https://github.com/ai16z/eliza/pull/468
+* docs: Update Contributors to bring inline with PR468 by @odilitime in https://github.com/ai16z/eliza/pull/470
+* feat: Cache Manager by @bmgalego in https://github.com/ai16z/eliza/pull/378
+* ollama generate case was using console.debug.  by @drew-royster in https://github.com/ai16z/eliza/pull/474
+* fix: ci by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/475
+* feat: Twitter Refactor by @bmgalego in https://github.com/ai16z/eliza/pull/478
+* refactor: add template types by @vivoidos in https://github.com/ai16z/eliza/pull/479
+* feat: adds check by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/466
+* fix: ignored modelEndpointOverride in generation by @darwintree in https://github.com/ai16z/eliza/pull/446
+* feat: Improvements by @bmgalego in https://github.com/ai16z/eliza/pull/482
+* fix: agent type error and sqlite file env by @bmgalego in https://github.com/ai16z/eliza/pull/484
+* fix: agent loadCharacters file resolver by @bmgalego in https://github.com/ai16z/eliza/pull/486
+* fix: fix character path loading by @bmgalego in https://github.com/ai16z/eliza/pull/487
+* fix: added missing packages to tsup configs' externals by @massivefermion in https://github.com/ai16z/eliza/pull/488
+* docs: Create best-practices.md documentation by @snobbee in https://github.com/ai16z/eliza/pull/463
+* feat: Added TWITTER_COOKIE example on quickstart.md by @haeunchin in https://github.com/ai16z/eliza/pull/476
+* feat: Improve knowledge embeddings by @tarrencev in https://github.com/ai16z/eliza/pull/472
+* feat: improve type safety by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/494
+* fix: improve embeddings by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/496
+* node-v by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/501
+* fix: deps by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/503
+* chore: add contributor license by @awidearray in https://github.com/ai16z/eliza/pull/502
+* fix: remove sol dep by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/504
+* fix: issue with npm by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/505
+* fix: services fix by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/509
+* fix: speech service fix by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/512
+
+#### New Contributors
+
+<details>
+<summary><strong>New Contributors</strong></summary>
+* @laser-riot made their first contribution in https://github.com/ai16z/eliza/pull/452
+* @null-hax made their first contribution in https://github.com/ai16z/eliza/pull/459
+* @coffeeorgreentea made their first contribution in https://github.com/ai16z/eliza/pull/462
+* @drew-royster made their first contribution in https://github.com/ai16z/eliza/pull/474
+* @massivefermion made their first contribution in https://github.com/ai16z/eliza/pull/488
+* @haeunchin made their first contribution in https://github.com/ai16z/eliza/pull/476
+* @awidearray made their first contribution in https://github.com/ai16z/eliza/pull/502
+</details>
+
+#### Full Changelog: https://github.com/ai16z/eliza/compare/v0.1.3...v0.1.4-alpha.3
+
+---
+
+## v0.1.3-alpha.2 (November 20, 2024)
+
+#### What's Changed
+* fix: configs by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/431
+* docs: Update contributing.md to incorporate Contribution Guidelines by @monilpat in https://github.com/ai16z/eliza/pull/430
+* fix: linting and imports ready for npm by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/433
+* feat: don't require .env to exist by @odilitime in https://github.com/ai16z/eliza/pull/427
+* chore: Update pr.yaml to show actual condition so easier to follow by @monilpat in https://github.com/ai16z/eliza/pull/429
+* fix: imports by @ponderingdemocritus in https://github.com/ai16z/eliza/pull/435
+
+#### Full Changelog: https://github.com/ai16z/eliza/compare/v0.1.1...v0.1.3-alpha.2
 
 ---
 

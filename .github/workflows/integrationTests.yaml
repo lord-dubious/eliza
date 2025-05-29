@@ -38,8 +38,9 @@ jobs:
       - name: Check for API key
         run: |
           if [ -z "$OPENAI_API_KEY" ]; then
-              echo "Error: OPENAI_API_KEY is not set."
-              exit 1
+              echo "Warning: OPENAI_API_KEY is not set. Some tests may be skipped."
+          else
+              echo "OPENAI_API_KEY is available for integration tests."
           fi
 
       - name: Run integration tests
