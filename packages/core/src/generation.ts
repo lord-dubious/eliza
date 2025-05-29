@@ -597,49 +597,7 @@ export async function generateText({
                 const openai = createOpenAI({
                     apiKey,
                     baseURL: endpoint,
-                    fetch: async (
-                        input: RequestInfo | URL,
-                        init?: RequestInit
-                    ): Promise<Response> => {
-                        const url =
-                            typeof input === "string"
-                                ? input
-                                : input.toString();
-                        const chain_id =
-                            runtime.getSetting("ETERNALAI_CHAIN_ID") || "45762";
-
-                        const options: RequestInit = { ...init };
-                        if (options?.body) {
-                            const body = JSON.parse(options.body as string);
-                            body.chain_id = chain_id;
-                            options.body = JSON.stringify(body);
-                        }
-
-                        const fetching = await runtime.fetch(url, options);
-
-                        if (
-                            parseBooleanFromText(
-                                runtime.getSetting("ETERNALAI_LOG")
-                            )
-                        ) {
-                            elizaLogger.info(
-                                "Request data: ",
-                                JSON.stringify(options, null, 2)
-                            );
-                            const clonedResponse = fetching.clone();
-                            try {
-                                clonedResponse.json().then((data) => {
-                                    elizaLogger.info(
-                                        "Response data: ",
-                                        JSON.stringify(data, null, 2)
-                                    );
-                                });
-                            } catch (e) {
-                                elizaLogger.debug(e);
-                            }
-                        }
-                        return fetching;
-                    },
+                    fetch: runtime.fetch,
                 });
 
                 let system_prompt =
@@ -664,9 +622,15 @@ export async function generateText({
                     elizaLogger.error(e);
                 }
 
+                // Prepare the request with chain_id
+                const chain_id = runtime.getSetting("ETERNALAI_CHAIN_ID") || "45762";
+                
+                // Add chain_id to context as a special marker for EternalAI
+                const contextWithChainId = `[chain_id: ${chain_id}]\n${context}`;
+
                 const { text: openaiResponse } = await aiGenerateText({
                     model: openai.languageModel(model),
-                    prompt: context,
+                    prompt: contextWithChainId,
                     system: system_prompt,
                     temperature: temperature,
                     maxTokens: max_response_length,
@@ -1536,6 +1500,13 @@ export async function splitChunks(
     return chunks;
 }
 
+function containsPartialUrl(text: string): boolean {
+    // Check for common URL patterns or fragments
+    return /https?:\/\/[^\s]*$/.test(text) || // URL at the end
+        /^[^\s]*\.[a-z]{2,}\//.test(text) || // Domain/path at beginning
+        /\b[a-z0-9]+(\.com|\.org|\.io|\.eth)\b/.test(text); // Common TLDs
+}
+
 
 function estimateTokensFromEnglishLength(stringLength) {
     return Math.round(stringLength / 4); // Rough estimate: 1 token ≈ 4 characters in English
@@ -1545,10 +1516,13 @@ function estimateEnglishLengthFromTokens(tokenCount) {
     return tokenCount * 4; // Reverse estimate: 1 token ≈ 4 characters in English
 }
 
+/// The splitText tries to respect the chunkSize, but to maintain the semantic meaning of the text (eg. URLs) we can go over the chunkSize by 50%
 export function splitText(content: string, chunkSize: number, bleed: number): string[] {
+    // try to split by double newlines
+    const paragraphs = content.split(/\n\s*\n/);
+
     // Convert chunk size and bleed from tokens to approximate character length
     const chunkCharSize = estimateEnglishLengthFromTokens(chunkSize);
-    const bleedCharSize = estimateEnglishLengthFromTokens(bleed);
 
     // If content is smaller than estimated chunk size, return it as a single chunk
     if (content.length <= chunkCharSize) {
@@ -1556,21 +1530,85 @@ export function splitText(content: string, chunkSize: number, bleed: number): st
     }
 
     const chunks: string[] = [];
-    let start = 0;
+    let currentChunk = "";
 
-    while (start < content.length) {
-        const end = Math.min(start + chunkCharSize, content.length);
-        chunks.push(content.substring(start, end));
+    for (const paragraph of paragraphs) {
+        const trimmedParagraph = paragraph.trim();
 
-        // Move forward by (chunkSize - bleed), converted to character length
-        const nextStart = start + (chunkCharSize - bleedCharSize);
-        if (nextStart >= content.length || nextStart <= start) {
-            break; // Stop if no progress is made
+        if (trimmedParagraph.length === 0) continue;
+
+        // if this paragraph fits in the current chunk, add it
+        if (currentChunk.length + trimmedParagraph.length <= chunkSize) {
+            currentChunk += (currentChunk.length > 0 ? "\n\n" : "") + trimmedParagraph;
+            continue;
         }
-        start = nextStart;
+
+        // if current chunk has content, flush it first
+        if (currentChunk.length > 0) {
+            // Check if current chunk ends with a partial URL or next paragraph starts with one
+            if (containsPartialUrl(currentChunk.trim()) || containsPartialUrl(trimmedParagraph)) {
+                // Try to combine them if they're not too large together
+                if (currentChunk.length + trimmedParagraph.length <= chunkSize * 1.5) {
+                    currentChunk += "\n\n" + trimmedParagraph;
+                    continue;
+                }
+            }
+
+            chunks.push(currentChunk.trim());
+            currentChunk = "";
+        }
+
+        // exceeds chunk size, split by sentences
+        if (trimmedParagraph.length > chunkSize) {
+            // sentence regex requires space/quote after punctuation to avoid splitting eg URLs, IPs, etc
+            const sentenceRegex = /[^.!?]+(?:[.!?](?:["']|\s|$))+/g;
+            const sentences = trimmedParagraph.match(sentenceRegex) || [trimmedParagraph];
+
+            for (const sentence of sentences) {
+                const trimmedSentence = sentence.trim();
+
+                if (trimmedSentence.length === 0) continue;
+
+                // If sentence fits in current chunk, add it
+                if (currentChunk.length + trimmedSentence.length <= chunkSize) {
+                    currentChunk += (currentChunk.length > 0 ? " " : "") + trimmedSentence;
+                } else {
+                    // content in the current chunk -> flush it
+                    if (currentChunk.length > 0) {
+                        // Check for URL splits again
+                        if (containsPartialUrl(currentChunk) || containsPartialUrl(trimmedSentence)) {
+                            // Try to keep sentences with URLs together if possible
+                            if (currentChunk.length + trimmedSentence.length <= chunkSize * 1.5) {
+                                currentChunk += " " + trimmedSentence;
+                                continue;
+                            }
+                        }
+
+                        chunks.push(currentChunk.trim());
+                        currentChunk = "";
+                    }
+
+                    // the sentence itself is longer than chunk size, just include it as its own chunk
+                    if (trimmedSentence.length > chunkSize) {
+                        chunks.push(trimmedSentence);
+                    } else {
+                        currentChunk = trimmedSentence;
+                    }
+                }
+            }
+        } else {
+            // is too large for current chunk but fits in a chunk by itself
+            chunks.push(trimmedParagraph);
+        }
     }
 
-    return chunks;
+    // add the last chunk if it has content
+    if (currentChunk.trim().length > 0) {
+        chunks.push(currentChunk.trim());
+    }
+
+    // If no chunks were created like the content is short just return content
+    return chunks.length > 0 ? chunks : [content];
 }
 
 /**
