@@ -1,14 +1,18 @@
-import { elizaLogger } from "@elizaos/core";
+import { elizaLogger, stringToUuid, composeContext, generateText, ModelClass } from "@elizaos/core";
 import type { IAgentRuntime } from "@elizaos/core";
 import type { TwitterApi } from "twitter-api-v2";
 import fs from "fs";
+import path from "path";
 import { 
     MediaPostingConfig, 
-    getRandomMediaFile, 
+    getRandomMediaFiles, 
     isImageFile, 
     isVideoFile,
-    analyzeMediaContent
+    analyzeMediaContent,
+    mediaPostTemplate,
+    createMediaData
 } from "./media-utils.ts";
+import type { ClientBase } from "./base.ts";
 
 export class MediaPostingManager {
     private client: ClientBase;
@@ -327,7 +331,7 @@ When sharing media, you respond authentically from your unique perspective, maki
             }
             
             // Upload media and post tweet
-            const success = await this.uploadAndPostMedia(mediaFile, tweetText);
+            const success = await this.uploadAndPostMedia(tweetText, mediaFile);
             
             if (success) {
                 elizaLogger.log(`✅ Posted media tweet: "${tweetText}"`);
@@ -347,30 +351,33 @@ When sharing media, you respond authentically from your unique perspective, maki
     /**
      * Uploads media and posts tweet
      */
-    private async uploadAndPostMedia(mediaPath: string, tweetText: string): Promise<boolean> {
+    private async uploadAndPostMedia(tweetText: string, mediaPath: string): Promise<boolean> {
         try {
-            elizaLogger.log(`📤 Uploading media: ${mediaPath}`);
+            elizaLogger.log(`📤 Uploading and posting media: ${path.basename(mediaPath)}`);
             
             // Read media file
             const mediaBuffer = fs.readFileSync(mediaPath);
             
-            // Upload media to Twitter
-            const mediaId = await this.client.v1.uploadMedia(mediaBuffer, {
-                mimeType: this.getMediaMimeType(mediaPath)
-            });
+            // Create media data for the sendTweet function
+            const mediaData = [{
+                data: mediaBuffer,
+                mediaType: this.getMediaMimeType(mediaPath)
+            }];
             
-            elizaLogger.log(`✅ Media uploaded with ID: ${mediaId}`);
+            // Post tweet with media using the client's sendTweet method
+            const result = await this.client.twitterClient.sendTweet(
+                tweetText,
+                undefined, // no reply
+                mediaData
+            );
             
-            // Post tweet with media
-            const tweet = await this.client.v2.tweet({
-                text: tweetText,
-                media: {
-                    media_ids: [mediaId]
-                }
-            });
-            
-            elizaLogger.log(`✅ Tweet posted with ID: ${tweet.data.id}`);
-            return true;
+            if (result) {
+                elizaLogger.log(`✅ Tweet posted successfully with media`);
+                return true;
+            } else {
+                elizaLogger.error("Failed to post tweet with media");
+                return false;
+            }
             
         } catch (error) {
             elizaLogger.error("Error uploading and posting media:", error);
