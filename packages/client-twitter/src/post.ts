@@ -58,8 +58,7 @@ const getMediaPostingConfig = (runtime: IAgentRuntime): MediaPostingConfig => {
     };
 };
 
-const twitterPostTemplate = `
-# Areas of Expertise
+export const twitterPostTemplate = `# Areas of Expertise
 {{knowledge}}
 
 # About {{agentName}} (@{{twitterUserName}}):
@@ -134,10 +133,6 @@ export class TwitterPostClient {
     private lastMediaPostTime = 0;
     private mediaPostingInterval: NodeJS.Timeout | null = null;
     private mediaPostingManager: MediaPostingManager | null = null;
-    private mediaPostingConfig: MediaPostingConfig;
-    private lastMediaPostTime = 0;
-    private mediaPostingInterval: NodeJS.Timeout | null = null;
-    private mediaPostingManager: MediaPostingManager | null = null;
 
     constructor(client: ClientBase, runtime: IAgentRuntime) {
         elizaLogger.debug("🔍 TwitterPostClient constructor start");
@@ -145,9 +140,12 @@ export class TwitterPostClient {
         this.runtime = runtime;
         this.twitterUsername = this.client.twitterConfig.TWITTER_USERNAME;
         this.isDryRun = this.client.twitterConfig.TWITTER_DRY_RUN;
-        this.mediaPostingConfig = getMediaPostingConfig(runtime);
-        this.mediaPostingManager = new MediaPostingManager(client, runtime, this.mediaPostingConfig, this.twitterUsername, this.isDryRun);
-        this.mediaPostingConfig = getMediaPostingConfig(runtime);
+        this.mediaPostingConfig = {
+            ENABLE_MEDIA_POSTING: this.client.twitterConfig.ENABLE_MEDIA_POSTING,
+            MEDIA_POST_INTERVAL_MIN: this.client.twitterConfig.MEDIA_POST_INTERVAL_MIN,
+            MEDIA_POST_INTERVAL_MAX: this.client.twitterConfig.MEDIA_POST_INTERVAL_MAX,
+            MEDIA_FOLDER_PATH: this.client.twitterConfig.MEDIA_FOLDER_PATH,
+        };
         this.mediaPostingManager = new MediaPostingManager(client, runtime, this.mediaPostingConfig, this.twitterUsername, this.isDryRun);
         
         // Explicit debug for approval provider
@@ -1742,7 +1740,10 @@ export class TwitterPostClient {
                     imageContext:
                         imageDescriptions.length > 0
                             ? `\nImages in Tweet:\n${imageDescriptions
-                                  .map((desc, i) => `Image ${i + 1}: ${desc}`)
+                                  .map(
+                                      (desc, i) =>
+                                          `Image ${i + 1}: ${desc}`
+                                  )
                                   .join("\n")}`
                             : "",
                     quotedContent,

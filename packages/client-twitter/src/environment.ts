@@ -76,6 +76,11 @@ export const twitterEnvSchema = z.object({
     ACTION_TIMELINE_TYPE: z
         .nativeEnum(ActionTimelineType)
         .default(ActionTimelineType.ForYou),
+    // Media posting configuration
+    ENABLE_MEDIA_POSTING: z.boolean().default(true),
+    MEDIA_POST_INTERVAL_MIN: z.number().int().default(120),
+    MEDIA_POST_INTERVAL_MAX: z.number().int().default(240),
+    MEDIA_FOLDER_PATH: z.string().default("./agent/media"),
 });
 
 export type TwitterConfig = z.infer<typeof twitterEnvSchema>;
@@ -232,6 +237,30 @@ export async function validateTwitterConfig(
             ACTION_TIMELINE_TYPE:
                 runtime.getSetting("ACTION_TIMELINE_TYPE") ||
                 process.env.ACTION_TIMELINE_TYPE,
+
+            // Media posting configuration
+            ENABLE_MEDIA_POSTING:
+                parseBooleanFromText(
+                    runtime.getSetting("ENABLE_MEDIA_POSTING") ||
+                        process.env.ENABLE_MEDIA_POSTING
+                ) ?? true,
+
+            MEDIA_POST_INTERVAL_MIN: safeParseInt(
+                runtime.getSetting("MEDIA_POST_INTERVAL_MIN") ||
+                    process.env.MEDIA_POST_INTERVAL_MIN,
+                120 // 2 hours
+            ),
+
+            MEDIA_POST_INTERVAL_MAX: safeParseInt(
+                runtime.getSetting("MEDIA_POST_INTERVAL_MAX") ||
+                    process.env.MEDIA_POST_INTERVAL_MAX,
+                240 // 4 hours
+            ),
+
+            MEDIA_FOLDER_PATH:
+                runtime.getSetting("MEDIA_FOLDER_PATH") ||
+                process.env.MEDIA_FOLDER_PATH ||
+                "./agent/media",
         };
 
         return twitterEnvSchema.parse(twitterConfig);
