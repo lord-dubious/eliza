@@ -66,6 +66,51 @@ export function getRandomMediaFile(mediaPath: string): string | null {
 }
 
 /**
+ * Get multiple random media files from the media folder
+ */
+export function getRandomMediaFiles(mediaPath: string, count: number = 1): string[] {
+    try {
+        const resolvedPath = path.resolve(mediaPath);
+        
+        if (!fs.existsSync(resolvedPath)) {
+            elizaLogger.warn(`Media folder not found: ${resolvedPath}`);
+            return [];
+        }
+
+        // Supported media file extensions
+        const mediaExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.avi'];
+        
+        const files: string[] = [];
+        const readDir = (dir: string) => {
+            const items = fs.readdirSync(dir);
+            for (const item of items) {
+                const fullPath = path.join(dir, item);
+                const stat = fs.statSync(fullPath);
+                if (stat.isDirectory()) {
+                    readDir(fullPath);
+                } else if (mediaExtensions.includes(path.extname(item).toLowerCase())) {
+                    files.push(fullPath);
+                }
+            }
+        };
+        
+        readDir(resolvedPath);
+
+        if (files.length === 0) {
+            elizaLogger.warn(`No media files found in: ${resolvedPath}`);
+            return [];
+        }
+
+        // Shuffle array and return requested count
+        const shuffled = files.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, Math.min(count, files.length));
+    } catch (error) {
+        elizaLogger.error("Error getting media files:", error);
+        return [];
+    }
+}
+
+/**
  * Check if file is an image
  */
 export function isImageFile(filePath: string): boolean {
@@ -105,6 +150,23 @@ The tweet should be {{adjective}} and relate to your interests and personality.
 Keep it under {{maxTweetLength}} characters. No emojis. Be authentic and interesting.
 Do not mention the media directly - let it speak for itself.
 Your response should be 1-2 sentences maximum.`;
+
+/**
+ * Create media data object for Twitter API
+ */
+export function createMediaData(filePath: string): { path: string; type: 'image' | 'video' } {
+    const isImage = isImageFile(filePath);
+    const isVideo = isVideoFile(filePath);
+    
+    if (!isImage && !isVideo) {
+        throw new Error(`Unsupported media file type: ${filePath}`);
+    }
+    
+    return {
+        path: filePath,
+        type: isImage ? 'image' : 'video'
+    };
+}
 
 /**
  * Analyzes media content using existing Eliza services
@@ -317,4 +379,3 @@ function getMimeType(filePath: string): string {
     };
     return mimeTypes[ext] || 'image/jpeg';
 }
-
