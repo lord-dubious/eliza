@@ -39,6 +39,18 @@ dotenv.config({ path: path.resolve(process.cwd(), 'agent/.env') });
 
 elizaLogger.info("🔧 Environment variables loaded from .env files");
 
+// Debug: Log Twitter configuration status
+const twitterUsername = process.env.TWITTER_USERNAME;
+const twitterEmail = process.env.TWITTER_EMAIL;
+const twitterDryRun = process.env.TWITTER_DRY_RUN;
+const enableMediaPosting = process.env.ENABLE_MEDIA_POSTING;
+
+elizaLogger.info("🐦 Twitter Configuration Status:");
+elizaLogger.info(`  Username: ${twitterUsername ? '✅ SET' : '❌ NOT SET'}`);
+elizaLogger.info(`  Email: ${twitterEmail ? '✅ SET' : '❌ NOT SET'}`);
+elizaLogger.info(`  Dry Run: ${twitterDryRun || 'false'}`);
+elizaLogger.info(`  Media Posting: ${enableMediaPosting || 'false'}`);
+
 export const wait = (minTime = 1000, maxTime = 3000) => {
     const waitTime =
         Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
