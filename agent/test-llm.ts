@@ -18,7 +18,7 @@ async function testLLMIntegration() {
         console.log(`🤖 Character: ${runtime.character.name}`);
 
         // Test basic state composition
-        const testState = await runtime.composeState({
+        const baseState = await runtime.composeState({
             userId: "test-user",
             agentId: runtime.agentId,
             content: { text: "Test message" },
@@ -32,8 +32,22 @@ async function testLLMIntegration() {
         if (tweetTemplate) {
             console.log("✅ Custom Twitter template found");
             
+            // Augment state with all required template fields
+            const augmentedStateForTweet = {
+                ...baseState,
+                agentName: runtime.character.name,
+                twitterUserName: runtime.character.username,
+                bio: Array.isArray(runtime.character.bio) ? runtime.character.bio.join('\n') : runtime.character.bio,
+                topics: runtime.character.topics?.join(', ') || '',
+                postExamples: runtime.character.postExamples?.join('\n') || '',
+                style: runtime.character.style,
+                maxTweetLength: 280,
+                adjective: "seductive", // Provide test value
+                topic: "fitness"        // Provide test value
+            };
+            
             const context = composeContext({
-                state: testState,
+                state: augmentedStateForTweet, // Use augmented state
                 template: tweetTemplate,
             });
 
@@ -68,4 +82,3 @@ async function testLLMIntegration() {
 }
 
 testLLMIntegration();
-

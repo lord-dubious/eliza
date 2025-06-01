@@ -7,6 +7,9 @@ async function testMediaIntegration() {
     
     try {
         // Test 1: Check if media template exists
+        if (!mediaPostTemplate) {
+            throw new Error("Media post template not found or undefined");
+        }
         console.log("✅ Media post template found");
         console.log(`📏 Template length: ${mediaPostTemplate.length} characters`);
         
@@ -23,9 +26,12 @@ async function testMediaIntegration() {
         const mockMediaState = {
             agentName: defaultCharacter.name,
             twitterUserName: defaultCharacter.username,
-            bio: defaultCharacter.bio?.join('\n'),
-            topics: defaultCharacter.topics?.join(', '),
-            postExamples: defaultCharacter.postExamples?.join('\n'),
+            bio: defaultCharacter.bio?.join('\n') || '',
+            lore: defaultCharacter.lore?.join('\n') || '', // Added for template
+            topics: defaultCharacter.topics?.join(', ') || '',
+            characterPostExamples: defaultCharacter.postExamples?.join('\n') || '', // Matched template field
+            providers: "OpenAI provider configured for testing", // Added for template
+            postDirections: defaultCharacter.style?.post?.join('\n') || '', // Added for template
             maxTweetLength: 280,
             adjective: "captivating",
             knowledge: "Media content analysis and contextual posting"
@@ -55,26 +61,30 @@ async function testMediaIntegration() {
         const path = await import('path');
         const mediaPath = './media'; // Fixed path - we're already in agent directory
         
-        if (fs.existsSync(mediaPath)) {
-            const files = fs.readdirSync(mediaPath);
-            const mediaFiles = files.filter(file => {
-                const ext = path.extname(file).toLowerCase();
-                return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.avi'].includes(ext);
-            });
-            
-            console.log(`\n📁 Media Folder Status:`);
-            console.log(`📝 Path: ${path.resolve(mediaPath)}`);
-            console.log(`📝 Total files: ${files.length}`);
-            console.log(`📝 Media files: ${mediaFiles.length}`);
-            
-            if (mediaFiles.length === 0) {
-                console.log("⚠️  No media files found. Add images/videos to agent/media/ folder");
+        try {
+            if (fs.existsSync(mediaPath)) {
+                const files = fs.readdirSync(mediaPath);
+                const mediaFiles = files.filter(file => {
+                    const ext = path.extname(file).toLowerCase();
+                    return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.mov', '.avi'].includes(ext);
+                });
+                
+                console.log(`\n📁 Media Folder Status:`);
+                console.log(`📝 Path: ${path.resolve(mediaPath)}`);
+                console.log(`📝 Total files: ${files.length}`);
+                console.log(`📝 Media files: ${mediaFiles.length}`);
+                
+                if (mediaFiles.length === 0) {
+                    console.log("⚠️  No media files found. Add images/videos to agent/media/ folder");
+                } else {
+                    console.log("✅ Media files ready for posting");
+                    mediaFiles.forEach(file => console.log(`   - ${file}`));
+                }
             } else {
-                console.log("✅ Media files ready for posting");
-                mediaFiles.forEach(file => console.log(`   - ${file}`));
+                console.log("❌ Media folder not found");
             }
-        } else {
-            console.log("❌ Media folder not found");
+        } catch (fsError) {
+            console.log(`❌ Error accessing media folder: ${fsError.message}`);
         }
         
         // Test 7: Model usage analysis
