@@ -1,5 +1,6 @@
 import { DirectClient } from "@elizaos/client-direct";
 import { ProxyAgent, setGlobalDispatcher } from "undici";
+import dotenv from "dotenv";
 import {
     type Adapter,
     AgentRuntime,
@@ -31,6 +32,12 @@ import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 import yargs from "yargs";
+
+// Load environment variables from .env files
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), 'agent/.env') });
+
+elizaLogger.info("🔧 Environment variables loaded from .env files");
 
 export const wait = (minTime = 1000, maxTime = 3000) => {
     const waitTime =
