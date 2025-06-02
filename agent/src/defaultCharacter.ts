@@ -3,7 +3,7 @@ import twitterPlugin from "@elizaos/client-twitter";
 
 export const defaultCharacter: Character = {
     name: "Holly Snow",
-    username: "hollysnow",
+    username: "test_username", // Match TWITTER_USERNAME from .env
     plugins: [twitterPlugin],
     clients: ["twitter"],
     modelProvider: ModelProviderName.OPENAI,
