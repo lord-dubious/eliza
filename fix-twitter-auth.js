@@ -1,149 +1,141 @@
 #!/usr/bin/env node
 
 /**
- * Fix Twitter Authentication Issues
- * This script helps diagnose and fix common Twitter auth problems
+ * Twitter Authentication Diagnostic and Fix Tool
+ * This script helps diagnose and fix Twitter authentication issues
  */
 
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-console.log('🔧 Twitter Authentication Diagnostic Tool\n');
-
-// Check .env file
 function checkEnvFile() {
-    console.log('📋 Checking .env configuration...');
+    console.log('🔍 Checking .env configuration...');
     
     if (!fs.existsSync('.env')) {
         console.log('❌ .env file not found!');
-        console.log('💡 Create .env file with your Twitter credentials');
-        return false;
+        console.log('💡 Create a .env file with your Twitter credentials');
+        return { success: false, username: null };
     }
     
     const envContent = fs.readFileSync('.env', 'utf8');
-    const lines = envContent.split('\n');
+    const getEnvVar = (name) => {
+        const match = envContent.match(new RegExp(`${name}=([^\\n\\r]+)`));
+        return match ? match[1] : null;
+    };
     
-    const requiredVars = ['TWITTER_USERNAME', 'TWITTER_PASSWORD', 'TWITTER_EMAIL'];
-    const testValues = ['test_username', 'test_password', 'test@example.com'];
+    const username = getEnvVar('TWITTER_USERNAME');
+    const password = getEnvVar('TWITTER_PASSWORD');
+    const email = getEnvVar('TWITTER_EMAIL');
     
-    let hasIssues = false;
+    console.log(`📋 Environment Variables:`);
+    console.log(`  TWITTER_USERNAME: ${username || 'NOT SET'}`);
+    console.log(`  TWITTER_PASSWORD: ${password ? '***' : 'NOT SET'}`);
+    console.log(`  TWITTER_EMAIL: ${email ? '***' : 'NOT SET'}`);
     
-    for (const varName of requiredVars) {
-        const line = lines.find(l => l.startsWith(varName + '='));
-        if (!line) {
-            console.log(`❌ Missing: ${varName}`);
-            hasIssues = true;
-        } else {
-            const value = line.split('=')[1];
-            if (testValues.includes(value)) {
-                console.log(`⚠️  ${varName}=${value} (test value - update with real credentials)`);
-                hasIssues = true;
-            } else {
-                console.log(`✅ ${varName}=****** (configured)`);
-            }
-        }
+    if (!username || !password || !email) {
+        console.log('❌ Missing required credentials in .env');
+        console.log('💡 Add these to your .env file:');
+        console.log('TWITTER_USERNAME=your_twitter_username');
+        console.log('TWITTER_PASSWORD=your_twitter_password');
+        console.log('TWITTER_EMAIL=your_twitter_email');
+        return { success: false, username: null };
     }
     
-    return !hasIssues;
+    if (username === 'test_username' || password === 'test_password') {
+        console.log('⚠️  Using test credentials - this will fail!');
+        console.log('💡 Update .env with real Twitter credentials');
+        return { success: false, username };
+    }
+    
+    console.log('✅ Environment variables look good');
+    return { success: true, username };
 }
 
-// Check character username
-function checkCharacterUsername() {
-    console.log('\n👤 Checking character username...');
+function checkCharacterUsername(envUsername) {
+    console.log('\\n👤 Checking character username...');
     
-    const characterFile = 'agent/src/defaultCharacter.ts';
-    if (!fs.existsSync(characterFile)) {
-        console.log('❌ Character file not found!');
+    const characterPath = './agent/src/defaultCharacter.ts';
+    if (!fs.existsSync(characterPath)) {
+        console.log('❌ Character file not found');
         return false;
     }
     
-    const content = fs.readFileSync(characterFile, 'utf8');
-    const usernameMatch = content.match(/username:\s*["']([^"']+)["']/);
+    const characterContent = fs.readFileSync(characterPath, 'utf8');
+    // Use the working regex pattern
+    const usernameMatch = characterContent.match(/username:\s*["']([^"']*)["']/);
     
     if (!usernameMatch) {
-        console.log('❌ Username not found in character file');
+        console.log('❌ Could not find username in character file');
         return false;
     }
     
     const characterUsername = usernameMatch[1];
-    console.log(`📝 Character username: "${characterUsername}"`);
+    console.log(`  Character username: ${characterUsername}`);
     
-    // Check if it matches .env
-    if (fs.existsSync('.env')) {
-        const envContent = fs.readFileSync('.env', 'utf8');
-        const envUsernameMatch = envContent.match(/TWITTER_USERNAME=([^\n\r]+)/);
+    if (characterUsername !== envUsername) {
+        console.log(`❌ Username mismatch!`);
+        console.log(`  Character: ${characterUsername}`);
+        console.log(`  .env: ${envUsername}`);
+        console.log('💡 Fixing username mismatch...');
         
-        if (envUsernameMatch) {
-            const envUsername = envUsernameMatch[1];
-            if (characterUsername === envUsername) {
-                console.log('✅ Character username matches TWITTER_USERNAME');
-                return true;
-            } else {
-                console.log(`❌ Mismatch! Character: "${characterUsername}", .env: "${envUsername}"`);
-                return false;
-            }
-        }
+        // Fix the mismatch by updating character username
+        const updatedContent = characterContent.replace(
+            /username:\s*["'][^"']*["']/,
+            `username: "${envUsername}"`
+        );
+        
+        fs.writeFileSync(characterPath, updatedContent);
+        console.log('✅ Fixed username mismatch in character file');
+        return true;
     }
     
-    return false;
+    console.log('✅ Username matches between character and .env');
+    return true;
 }
 
-// Clear cache
 function clearCache() {
-    console.log('\n🧹 Clearing Twitter cache...');
+    console.log('\\n🧹 Clearing Twitter cache...');
     
-    const cachePatterns = ['.cache', 'node_modules/.cache', '.twitter-cache'];
-    let cleared = 0;
-    
-    for (const pattern of cachePatterns) {
-        if (fs.existsSync(pattern)) {
-            try {
-                fs.rmSync(pattern, { recursive: true, force: true });
-                console.log(`🗑️  Removed: ${pattern}`);
-                cleared++;
-            } catch (err) {
-                console.warn(`⚠️  Could not remove ${pattern}:`, err.message);
-            }
+    const cacheDir = '.data';
+    if (fs.existsSync(cacheDir)) {
+        const files = fs.readdirSync(cacheDir);
+        const twitterFiles = files.filter(f => f.includes('twitter'));
+        
+        if (twitterFiles.length > 0) {
+            console.log(`  Found ${twitterFiles.length} Twitter cache files`);
+            twitterFiles.forEach(file => {
+                const filePath = path.join(cacheDir, file);
+                fs.unlinkSync(filePath);
+                console.log(`  Deleted: ${file}`);
+            });
+            console.log('✅ Twitter cache cleared');
+        } else {
+            console.log('  No Twitter cache files found');
         }
-    }
-    
-    if (cleared === 0) {
-        console.log('✅ No cache found to clear');
     } else {
-        console.log(`✅ Cleared ${cleared} cache directories`);
+        console.log('  No cache directory found');
     }
 }
 
-// Main diagnostic
 async function runDiagnostic() {
-    const envOk = checkEnvFile();
-    const usernameOk = checkCharacterUsername();
+    console.log('🔧 Twitter Authentication Diagnostic Tool\\n');
     
+    const envResult = checkEnvFile();
+    const usernameOk = checkCharacterUsername(envResult.username);
     clearCache();
     
-    console.log('\n📊 Summary:');
-    console.log(`Environment: ${envOk ? '✅' : '❌'}`);
-    console.log(`Username Match: ${usernameOk ? '✅' : '❌'}`);
+    console.log('\\n📊 Summary:');
+    console.log(`📋 Environment: ${envResult.success ? '✅' : '❌'}`);
+    console.log(`👤 Username Match: ${usernameOk ? '✅' : '❌'}`);
+    console.log(`🧹 Cache Status: Clear`);
     
-    if (!envOk || !usernameOk) {
-        console.log('\n🛠️  Fixes needed:');
-        
-        if (!envOk) {
-            console.log('1. Update .env with real Twitter credentials:');
-            console.log('   TWITTER_USERNAME=your_real_username');
-            console.log('   TWITTER_PASSWORD=your_real_password');
-            console.log('   TWITTER_EMAIL=your_real_email');
-        }
-        
-        if (!usernameOk) {
-            console.log('2. Make sure character username matches TWITTER_USERNAME');
-        }
-        
-        console.log('\n3. Restart the agent after making changes');
+    if (envResult.success && usernameOk) {
+        console.log('\\n🚀 Ready to test! Try running the agent now:');
+        console.log('cd agent && npm start');
     } else {
-        console.log('\n🎉 Configuration looks good! Try starting the agent again.');
+        console.log('\\n⚠️  Please fix the issues above before running the agent');
     }
 }
 
-runDiagnostic();
+runDiagnostic().catch(console.error);
 
