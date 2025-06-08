@@ -116,7 +116,15 @@ function safeParseInt(
 // most of the inputs from the framework (env/character)
 
 // we also do a lot of typing/parsing here
-// so we can do it once and only once per character
+/**
+ * Validates and constructs the Twitter integration configuration from runtime settings and environment variables.
+ *
+ * Retrieves configuration values from the provided {@link IAgentRuntime} or environment variables, applies parsing and defaulting logic, and validates the resulting object against the schema. Ensures all required fields are present and conform to expected types and constraints, including media posting options.
+ *
+ * @returns The validated Twitter configuration object.
+ *
+ * @throws {Error} If configuration validation fails, with details for each invalid field.
+ */
 export async function validateTwitterConfig(
     runtime: IAgentRuntime
 ): Promise<TwitterConfig> {
